@@ -1,0 +1,43 @@
+import subprocess
+import sys
+import os
+
+
+
+if (os.path.exists("build")):
+	dl=[]
+	for r,ndl,fl in os.walk("build"):
+		r=r.replace("\\","/").strip("/")+"/"
+		for d in ndl:
+			dl.insert(0,r+d)
+		for f in fl:
+			os.remove(r+f)
+	for k in dl:
+		os.rmdir(k)
+else:
+	os.mkdir("build")
+cd=os.getcwd()
+os.chdir("build")
+if ("--release" in sys.argv):
+	if (subprocess.run(["cl","/c","/permissive-","/GS","/utf-8","/W3","/Zc:wchar_t","/Gm-","/sdl","/Zc:inline","/fp:precise","/D","NDEBUG","/D","_WINDOWS","/D","_UNICODE","/D","UNICODE","/D","__DLL_BUILD__","/errorReport:none","/WX","/Zc:forScope","/Gd","/Oi","/FC","/EHsc","/nologo","/diagnostics:column","/GL","/Gy","/Zi","/O2","/Oi","/MD","/I","../src/include","../src/desktop_manager/*.cpp"]).returncode!=0 or subprocess.run(["link","*.obj","/OUT:desktop_manager.dll","/DLL","/DYNAMICBASE","kernel32.lib","user32.lib","gdi32.lib","winspool.lib","comdlg32.lib","advapi32.lib","shell32.lib","ole32.lib","oleaut32.lib","uuid.lib","odbc32.lib","odbccp32.lib","/MACHINE:X64","/SUBSYSTEM:WINDOWS","/ERRORREPORT:none","/NOLOGO","/TLBID:1","/WX","/LTCG","/OPT:REF","/INCREMENTAL:NO","/OPT:ICF"]).returncode!=0):
+		os.chdir(cd)
+		sys.exit(1)
+	for k in os.listdir("."):
+		if (k[-4:] not in [".dll",".lib"]):
+			os.remove(k)
+	if (subprocess.run(["cl","/c","/permissive-","/GS","/utf-8","/W3","/Zc:wchar_t","/Gm-","/sdl","/Zc:inline","/fp:precise","/D","NDEBUG","/D","_WINDOWS","/D","_UNICODE","/D","UNICODE","/errorReport:none","/WX","/Zc:forScope","/Gd","/Oi","/FC","/EHsc","/nologo","/diagnostics:column","/GL","/Gy","/Zi","/O2","/Oi","/MD","/I","../src/include","../src/main.cpp"]).returncode!=0 or subprocess.run(["link","*.obj","/OUT:desktop_manager.exe","/DYNAMICBASE","kernel32.lib","user32.lib","gdi32.lib","winspool.lib","comdlg32.lib","advapi32.lib","shell32.lib","ole32.lib","oleaut32.lib","uuid.lib","odbc32.lib","odbccp32.lib","desktop_manager.lib","/MACHINE:X64","/SUBSYSTEM:CONSOLE","/ERRORREPORT:none","/NOLOGO","/TLBID:1","/WX","/LTCG","/OPT:REF","/INCREMENTAL:NO","/OPT:ICF"]).returncode!=0):
+		os.chdir(cd)
+		sys.exit(1)
+else:
+	if (subprocess.run(["cl","/c","/permissive-","/GS","/utf-8","/W3","/Zc:wchar_t","/Gm-","/sdl","/Zc:inline","/fp:precise","/D","_DEBUG","/D","_WINDOWS","/D","_UNICODE","/D","UNICODE","/D","__DLL_BUILD__","/errorReport:none","/WX","/Zc:forScope","/Gd","/Oi","/FC","/EHsc","/nologo","/diagnostics:column","/ZI","/Od","/RTC1","/MDd","/I","../src/include","../src/desktop_manager/*.cpp"]).returncode!=0 or subprocess.run(["link","*.obj","/OUT:desktop_manager.dll","/DLL","/DYNAMICBASE","kernel32.lib","user32.lib","gdi32.lib","winspool.lib","comdlg32.lib","advapi32.lib","shell32.lib","ole32.lib","oleaut32.lib","uuid.lib","odbc32.lib","odbccp32.lib","/MACHINE:X64","/SUBSYSTEM:WINDOWS","/ERRORREPORT:none","/NOLOGO","/TLBID:1","/WX","/DEBUG","/INCREMENTAL"]).returncode!=0):
+		os.chdir(cd)
+		sys.exit(1)
+	for k in os.listdir("."):
+		if (k[-4:] not in [".dll",".lib"]):
+			os.remove(k)
+	if (subprocess.run(["cl","/c","/permissive-","/GS","/utf-8","/W3","/Zc:wchar_t","/Gm-","/sdl","/Zc:inline","/fp:precise","/D","_DEBUG","/D","_WINDOWS","/D","_UNICODE","/D","UNICODE","/errorReport:none","/WX","/Zc:forScope","/Gd","/Oi","/FC","/EHsc","/nologo","/diagnostics:column","/ZI","/Od","/RTC1","/MDd","/I","../src/include","../src/main.cpp"]).returncode!=0 or subprocess.run(["link","*.obj","/OUT:desktop_manager.exe","/DYNAMICBASE","kernel32.lib","user32.lib","gdi32.lib","winspool.lib","comdlg32.lib","advapi32.lib","shell32.lib","ole32.lib","oleaut32.lib","uuid.lib","odbc32.lib","odbccp32.lib","desktop_manager.lib","/MACHINE:X64","/SUBSYSTEM:CONSOLE","/ERRORREPORT:none","/NOLOGO","/TLBID:1","/WX","/DEBUG","/INCREMENTAL"]).returncode!=0):
+		os.chdir(cd)
+		sys.exit(1)
+os.chdir(cd)
+if ("--run" in sys.argv):
+	subprocess.run(["build/desktop_manager.exe"])
